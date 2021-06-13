@@ -6,17 +6,29 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotEmpty;
+import java.beans.Transient;
 import java.io.Serializable;
 
 @Data
 @RequiredArgsConstructor
 public class Vehicle implements Serializable {
 
+    @NotEmpty
     private Long id;
+
+    @NotEmpty
     private String plate;
+
+    @NotEmpty
     private String model;
+
+    @NotEmpty
     private String manufacturer;
+
+    @NotEmpty
     private String color;
+
     private boolean status;
 
     private Vehicle(final VehicleBuilder builder) {

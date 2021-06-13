@@ -4,6 +4,7 @@ import com.alelo.frota.dataprovider.VehicleRepository;
 import com.alelo.frota.entity.Vehicle;
 import com.alelo.frota.usecase.dto.VehicleDTO;
 import com.alelo.frota.usecase.exceptions.PlateErrorException;
+import com.alelo.frota.usecase.exceptions.VehicleNotFound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -101,6 +103,52 @@ public class VehicleUseCaseImplTest {
         assertTrue(vehicleDTO.getId().equals(vehicle.getId()));
         assertTrue(vehicleDTO.getPlate().equals(vehicle.getPlate()));
 
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenTryUpdateVehiclePlate(){
+
+        Vehicle vehicleUpdate = new Vehicle();
+        vehicleUpdate.setPlate("ABC");
+        vehicleUpdate.setManufacturer("Manufacturer");
+        vehicleUpdate.setColor("blue");
+
+        Vehicle vehiclePersisted = new Vehicle();
+        // try change the plate
+        vehiclePersisted.setPlate("ABCD");
+        vehiclePersisted.setManufacturer("Manufacturer");
+        vehiclePersisted.setColor("blue");
+
+        when(vehicleRepository.findById(anyLong())).thenReturn(Optional.of(vehiclePersisted));
+
+        PlateErrorException exception = assertThrows(PlateErrorException.class, () -> {
+            useCase.update(vehicleUpdate, anyLong());
+        });
+
+        assertTrue(exception.getMessage().contains("não pode ser atualizada"));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenVehicleThatWillBeUpdateNotFound(){
+
+        Vehicle vehicleUpdate = new Vehicle();
+        vehicleUpdate.setPlate("ABC");
+        vehicleUpdate.setManufacturer("Manufacturer");
+        vehicleUpdate.setColor("blue");
+
+        Vehicle vehiclePersisted = new Vehicle();
+        // try change the plate
+        vehiclePersisted.setPlate("ABCD");
+        vehiclePersisted.setManufacturer("Manufacturer");
+        vehiclePersisted.setColor("blue");
+
+        when(vehicleRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        VehicleNotFound exception = assertThrows(VehicleNotFound.class, () -> {
+            useCase.update(vehicleUpdate, anyLong());
+        });
+
+       assertTrue(exception.getMessage().contains("não encontrado"));
     }
 
 }

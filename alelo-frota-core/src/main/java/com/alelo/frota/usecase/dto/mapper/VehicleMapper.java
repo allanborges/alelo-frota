@@ -7,6 +7,7 @@ public class VehicleMapper {
 
     public static VehicleDTO toDTO(final Vehicle vehicle) {
         return VehicleDTO.builder()
+                .id(vehicle.getId())
                 .color(vehicle.getColor())
                 .manufacturer(vehicle.getManufacturer())
                 .plate(vehicle.getPlate())
