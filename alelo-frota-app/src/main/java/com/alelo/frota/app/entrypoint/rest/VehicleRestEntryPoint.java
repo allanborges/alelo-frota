@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,8 +25,20 @@ public class VehicleRestEntryPoint {
     }
 
     @PostMapping
-    public ResponseEntity<VehicleDTO> saveVehicle(@RequestBody Vehicle vehicle) {
+    public ResponseEntity<VehicleDTO> saveVehicle(@RequestBody @Valid Vehicle vehicle) {
         return ResponseEntity.ok(vehicleUseCase.save(vehicle));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteVehicle(@PathVariable long id) {
+        vehicleUseCase.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<VehicleDTO> updateVehicle(@PathVariable long id,
+                                                    @RequestBody Vehicle vehicle) {
+        return ResponseEntity.accepted().body(vehicleUseCase.update(vehicle, id));
     }
 
 }

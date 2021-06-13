@@ -6,11 +6,13 @@ import com.alelo.frota.dataprovider.VehicleRepository;
 import com.alelo.frota.entity.Vehicle;
 import com.alelo.frota.usecase.dto.VehicleDTO;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -34,7 +36,8 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 
     @Override
     public List<Vehicle> findAll(int page, int limit) {
-        return null;
+        var entities = vehicleRepositoryMongo.findAll(PageRequest.of(page, limit));
+        return  entities.stream().map(VehicleRepositoryMapper::toDomainEntity).collect(Collectors.toList());
     }
 
     @Override
@@ -44,6 +47,21 @@ public class VehicleRepositoryImpl implements VehicleRepository {
 
     @Override
     public boolean validateIfPlateExist(String plate) {
+        Optional<VehicleEntity> optionalVehicle = vehicleRepositoryMongo.findOneByPlate(plate);
+        if (optionalVehicle.isPresent()){
+            return true;
+        }
         return false;
     }
+
+    @Override
+    public void delete(long id) {
+        vehicleRepositoryMongo.deleteById(id);
+    }
+
+    @Override
+    public Optional<Vehicle> findById(long id) {
+        return Optional.of(VehicleRepositoryMapper.toDomainEntity(vehicleRepositoryMongo.findById(id).get()));
+    }
+
 }
