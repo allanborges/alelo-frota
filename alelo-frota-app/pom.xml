@@ -45,8 +45,9 @@
         <dependency>
             <groupId>com.alelo.frota</groupId>
             <artifactId>alelo-frota-core</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
         </dependency>
-
 
     </dependencies>
 
